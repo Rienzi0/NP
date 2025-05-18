@@ -1,0 +1,32 @@
+{
+    "usr_1":{
+        "usr_id":"001",
+        "history_meal":{
+            "meal_1":{
+                "date":"2025.03.28",
+                "time":"14:30",
+                "nurition":{
+                    "cal":"250",
+                    "carb":"48",
+                    "mass":"376",
+                    "protein":"9",
+                    "fat":"1.5"
+                }
+
+            }
+        
+        },
+        "history_exercise":{
+            "exercise_1":{
+                "date":"2025.03.28",
+                "time":"14:30",
+                "type":"hiking"
+            }
+
+        }
+        
+        
+
+
+    }
+}

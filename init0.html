@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalTrack - Health Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .nutrition-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #667eea;
+            background-color: #f8fafc;
+        }
+        .upload-area.dragover {
+            border-color: #667eea;
+            background-color: #ebf4ff;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-heartbeat text-2xl"></i>
+                <span class="text-xl font-bold">VitalTrack</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="hover:text-gray-200 font-medium">Dashboard</a>
+                <a href="#" class="hover:text-gray-200 font-medium">Nutrition</a>
+                <a href="#" class="hover:text-gray-200 font-medium">Activity</a>
+                <a href="#" class="hover:text-gray-200 font-medium">History</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="loginBtn" class="px-4 py-2 rounded-lg hover:bg-white hover:text-indigo-700 transition">Login</button>
+                <button id="registerBtn" class="px-4 py-2 bg-white text-indigo-700 rounded-lg hover:bg-gray-100 transition">Register</button>
+                <button class="md:hidden">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Your Personal Health Companion</h1>
+                <p class="text-xl mb-8">Track nutrition, analyze meals, and receive personalized health recommendations based on your unique profile and history.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button class="px-6 py-3 bg-white text-indigo-700 rounded-lg font-medium hover:bg-gray-100 transition">Get Started</button>
+                    <button class="px-6 py-3 border border-white rounded-lg font-medium hover:bg-white hover:text-indigo-700 transition">Learn More</button>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div class="relative w-64 h-64 md:w-80 md:h-80">
+                    <div class="absolute inset-0 bg-white bg-opacity-20 rounded-full blur-xl"></div>
+                    <div class="relative bg-white bg-opacity-10 rounded-full p-8 backdrop-filter backdrop-blur-lg border border-white border-opacity-20 w-full h-full flex items-center justify-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2965/2965714.png" alt="Health Dashboard" class="w-full h-full object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Dashboard Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800">Your Health Dashboard</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Health Summary Card -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Health Summary</h3>
+                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Good</span>
+                    </div>
+                    <div class="flex items-center justify-center my-6">
+                        <svg class="w-32 h-32" viewBox="0 0 36 36">
+                            <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke="#e6e6e6"
+                                stroke-width="3"
+                                stroke-dasharray="100, 100"/>
+                            <path d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none"
+                                stroke="#4f46e5"
+                                stroke-width="3"
+                                stroke-dasharray="75, 100"
+                                class="progress-ring__circle"/>
+                            <text x="18" y="20.5" text-anchor="middle" font-size="6" fill="#4f46e5" font-weight="bold">75%</text>
+                        </svg>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">BMI</span>
+                            <span class="font-medium">23.4</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Activity</span>
+                            <span class="font-medium">5,240 steps</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Water</span>
+                            <span class="font-medium">1.8L</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Card -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Today's Nutrition</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-600">Calories</span>
+                                <span class="text-sm font-medium">1,450/2,000</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 72%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-600">Protein</span>
+                                <span class="text-sm font-medium">65g/90g</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 72%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-600">Carbs</span>
+                                <span class="text-sm font-medium">180g/250g</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 72%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-600">Fat</span>
+                                <span class="text-sm font-medium">45g/65g</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-red-500 h-2 rounded-full" style="width: 69%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations Card -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Health Recommendations</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-utensils text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Increase vegetable intake by 1 serving per day</p>
+                                <p class="text-sm text-gray-500 mt-1">Based on your last 7 days nutrition</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-running text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Try adding 10 minutes of cardio to your routine</p>
+                                <p class="text-sm text-gray-500 mt-1">Your activity level decreased 15% this week</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                <i class="fas fa-glass-whiskey text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-800">Drink 500ml more water daily</p>
+                                <p class="text-sm text-gray-500 mt-1">You've been below hydration goals</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nutrition Analysis Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-gray-800">Nutrition Analysis</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Upload Area -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Analyze Your Meal</h3>
+                    <p class="text-gray-600 mb-6">Upload a photo of your meal to analyze its nutritional content and get personalized recommendations.</p>
+                    
+                    <div id="uploadArea" class="upload-area rounded-lg p-8 text-center cursor-pointer mb-4">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600 font-medium">Drag & drop your meal photo here</p>
+                        <p class="text-gray-500 text-sm">or click to browse files</p>
+                        <input type="file" id="mealPhoto" accept="image/*" class="hidden">
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                        <button id="analyzeBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex-1 disabled:opacity-50" disabled>
+                            <i class="fas fa-search mr-2"></i> Analyze Meal
+                        </button>
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex-1">
+                            <i class="fas fa-history mr-2"></i> Recent Meals
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Analysis Results -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Analysis Results</h3>
+                    <div id="analysisPlaceholder" class="text-center py-12">
+                        <i class="fas fa-utensils text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Your meal analysis will appear here after upload</p>
+                    </div>
+                    <div id="analysisResults" class="hidden">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 rounded-lg overflow-hidden mr-4">
+                                <img id="analyzedImage" src="" alt="Analyzed meal" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800" id="mealName">Chicken Salad</h4>
+                                <p class="text-gray-500 text-sm">Estimated calories: <span id="mealCalories">450</span> kcal</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-indigo-600" id="proteinValue">32g</div>
+                                <div class="text-gray-500 text-sm">Protein</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-yellow-500" id="carbsValue">45g</div>
+                                <div class="text-gray-500 text-sm">Carbs</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-red-500" id="fatValue">18g</div>
+                                <div class="text-gray-500 text-sm">Fat</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h5 class="font-medium text-blue-800 mb-2">Recommendation</h5>
+                            <p class="text-blue-700 text-sm" id="mealRecommendation">This meal is well-balanced. Consider adding a side of whole grains to increase fiber intake.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Health History Section -->
+        <section>
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Your Health History</h2>
+                <div class="flex space-x-3">
+                    <select class="border border-gray-300 rounded-lg px-3 py-2 text-gray-700">
+                        <option>Last 7 days</option>
+                        <option>Last 30 days</option>
+                        <option>Last 90 days</option>
+                        <option>All time</option>
+                    </select>
+                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        <i class="fas fa-download mr-2"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x">
+                    <div class="p-6">
+                        <div class="text-gray-500 mb-1">Average Calories</div>
+                        <div class="text-2xl font-bold text-gray-800">1,850</div>
+                        <div class="text-sm text-green-600 flex items-center mt-1">
+                            <i class="fas fa-arrow-up mr-1"></i> 5% from last period
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-gray-500 mb-1">Average Protein</div>
+                        <div class="text-2xl font-bold text-gray-800">72g</div>
+                        <div class="text-sm text-red-600 flex items-center mt-1">
+                            <i class="fas fa-arrow-down mr-1"></i> 3% from last period
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-gray-500 mb-1">Average Steps</div>
+                        <div class="text-2xl font-bold text-gray-800">6,240</div>
+                        <div class="text-sm text-green-600 flex items-center mt-1">
+                            <i class="fas fa-arrow-up mr-1"></i> 12% from last period
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-gray-500 mb-1">Average Water</div>
+                        <div class="text-2xl font-bold text-gray-800">2.1L</div>
+                        <div class="text-sm text-gray-600 flex items-center mt-1">
+                            <i class="fas fa-equals mr-1"></i> Same as last period
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t p-6">
+                    <div class="h-64">
+                        <!-- Chart placeholder - in a real app, this would be a charting library -->
+                        <div class="flex items-center justify-center h-full bg-gray-50 rounded-lg">
+                            <p class="text-gray-500">Nutrition and activity trends chart would appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800">Create Account</h3>
+                    <button id="closeRegisterModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="registrationForm" class="space-y-4">
+                    <div>
+                        <label for="regName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="regName" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="regEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="regEmail" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="regPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="regPassword" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="regConfirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="regConfirmPassword" name="confirm_password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="regTerms" name="terms" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" required>
+                        <label for="regTerms" class="ml-2 block text-sm text-gray-700">
+                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">Already have an account? <button id="switchToLogin" class="text-indigo-600 hover:text-indigo-500 font-medium">Log in</button></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800">Welcome Back</h3>
+                    <button id="closeLoginModal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label for="loginEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="loginEmail" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div>
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="loginPassword" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="rememberMe" name="remember" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="rememberMe" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                        </div>
+                        <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">Don't have an account? <button id="switchToRegister" class="text-indigo-600 hover:text-indigo-500 font-medium">Sign up</button></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-heartbeat text-2xl"></i>
+                        <span class="text-xl font-bold">VitalTrack</span>
+                    </div>
+                    <p class="text-gray-400">Your personal health companion for better nutrition, activity tracking, and wellness planning.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Features</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Nutrition Analysis</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Health Tracking</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Personalized Plans</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Progress Reports</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Connect With Us</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-blue-400 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-pink-600 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-red-600 transition">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-400">Subscribe to our newsletter</p>
+                    <div class="mt-2 flex">
+                        <input type="email" placeholder="Your email" class="px-3 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 w-full">
+                        <button class="px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2023 VitalTrack. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM Elements
+        const registerBtn = document.getElementById('registerBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerModal = document.getElementById('registerModal');
+        const loginModal = document.getElementById('loginModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const uploadArea = document.getElementById('uploadArea');
+        const mealPhotoInput = document.getElementById('mealPhoto');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const analysisPlaceholder = document.getElementById('analysisPlaceholder');
+        const analysisResults = document.getElementById('analysisResults');
+        const analyzedImage = document.getElementById('analyzedImage');
+        const mealName = document.getElementById('mealName');
+        const mealCalories = document.getElementById('mealCalories');
+        const proteinValue = document.getElementById('proteinValue');
+        const carbsValue = document.getElementById('carbsValue');
+        const fatValue = document.getElementById('fatValue');
+        const mealRecommendation = document.getElementById('mealRecommendation');
+
+        // Modal Handlers
+        registerBtn.addEventListener('click', () => {
+            registerModal.classList.remove('hidden');
+        });
+
+        loginBtn.addEventListener('click', () => {
+            loginModal.classList.remove('hidden');
+        });
+
+        closeRegisterModal.addEventListener('click', () => {
+            registerModal.classList.add('hidden');
+        });
+
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+        });
+
+        switchToLogin.addEventListener('click', () => {
+            registerModal.classList.add('hidden');
+            loginModal.classList.remove('hidden');
+        });
+
+        switchToRegister.addEventListener('click', () => {
+            loginModal.classList.add('hidden');
+            registerModal.classList.remove('hidden');
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === registerModal) {
+                registerModal.classList.add('hidden');
+            }
+            if (e.target === loginModal) {
+                loginModal.classList.add('hidden');
+            }
+        });
+
+        // Form submissions
+        document.getElementById('registrationForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In a real app, this would send to Django backend
+            alert('Registration form submitted!');
+            registerModal.classList.add('hidden');
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In a real app, this would send to Django backend
+            alert('Login form submitted!');
+            loginModal.classList.add('hidden');
+        });
+
+        // Meal photo upload and analysis
+        uploadArea.addEventListener('click', () => {
+            mealPhotoInput.click();
+        });
+
+        mealPhotoInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = (event) => {
+                    // In a real app, this would upload to Django backend for analysis
+                    // Here we simulate analysis results
+                    analyzeBtn.disabled = false;
+                    
+                    // For demo purposes, store the image data to display later
+                    uploadArea.dataset.image = event.target.result;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            uploadArea.classList.remove('dragover');
+        }
+
+        uploadArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            
+            if (file && file.type.match('image.*')) {
+                mealPhotoInput.files = dt.files;
+                const event = new Event('change');
+                mealPhotoInput.dispatchEvent(event);
+            }
+        });
+
+        // Analyze button handler
+        analyzeBtn.addEventListener('click', () => {
+            // Simulate analysis - in a real app this would call Django backend
+            analysisPlaceholder.classList.add('hidden');
+            analysisResults.classList.remove('hidden');
+            
+            // Display the uploaded image
+            analyzedImage.src = uploadArea.dataset.image;
+            
+            // Set sample analysis data
+            mealName.textContent = "Chicken Salad";
+            mealCalories.textContent = "450";
+            proteinValue.textContent = "32g";
+            carbsValue.textContent = "45g";
+            fatValue.textContent = "18g";
+            mealRecommendation.textContent = "This meal is well-balanced. Consider adding a side of whole grains to increase fiber intake.";
+            
+            // In a real app, this would be the response from your Django backend
+            // Example API call:
+            /*
+            const formData = new FormData();
+            formData.append('meal_image', mealPhotoInput.files[0]);
+            
+            fetch('/api/analyze-meal/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'), // For Django CSRF protection
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update UI with real data
+                analyzedImage.src = data.image_url;
+                mealName.textContent = data.meal_name;
+                mealCalories.textContent = data.calories;
+                proteinValue.textContent = data.protein + 'g';
+                carbsValue.textContent = data.carbs + 'g';
+                fatValue.textContent = data.fat + 'g';
+                mealRecommendation.textContent = data.recommendation;
+                
+                analysisPlaceholder.classList.add('hidden');
+                analysisResults.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error analyzing meal. Please try again.');
+            });
+            */
+        });
+
+        // Helper function to get CSRF token for Django
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>
