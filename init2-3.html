@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitalis - Health Management & Planning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'tiffany': {
+                            '50': '#f0f9f8',
+                            '100': '#d8f0ee',
+                            '200': '#b5e2df',
+                            '300': '#81cdca',
+                            '400': '#4fb0ae',
+                            '500': '#349492',
+                            '600': '#2a7777',
+                            '700': '#266060',
+                            '800': '#234e4e',
+                            '900': '#214343',
+                            '950': '#0f2728',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #81cdca 0%, #4fb0ae 100%);
+        }
+        
+        .nutrition-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .file-upload {
+            border: 2px dashed #b5e2df;
+        }
+        
+        .file-upload:hover {
+            border-color: #81cdca;
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .feature-card {
+            transition: all 0.3s ease;
+            border-radius: 16px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .recommendation-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .activity-level {
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        .day-selector {
+            transition: all 0.2s ease;
+        }
+
+        .day-selector.active {
+            background-color: #4fb0ae;
+            color: white;
+        }
+
+        .day-selector:not(.active):hover {
+            background-color: #d8f0ee;
+        }
+
+        .meal-time {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .meal-time::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            background-color: #4fb0ae;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 0.5625rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #d8f0ee;
+        }
+
+        .week-planner {
+            scrollbar-width: thin;
+            scrollbar-color: #81cdca #f0f9f8;
+        }
+
+        .week-planner::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .week-planner::-webkit-scrollbar-track {
+            background: #f0f9f8;
+            border-radius: 10px;
+        }
+
+        .week-planner::-webkit-scrollbar-thumb {
+            background-color: #81cdca;
+            border-radius: 10px;
+        }
+
+        /* Updated styles for AI Health Client */
+        .ai-message {
+            max-width: 80%;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            color: #333;
+        }
+
+        .ai-message.user {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .ai-message.bot {
+            background-color: #f8f9fa;
+            margin-right: auto;
+            border-bottom-left-radius: 0.25rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .chat-container {
+            height: 300px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #81cdca #f0f9f8;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f0f9f8;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #81cdca;
+            border-radius: 3px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            padding: 0.5rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #4fb0ae;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* New styles for enhanced nutrition panel */
+        .nutrition-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .water-drop {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            background-color: #3b82f6;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+        }
+
+        .water-drop::after {
+            content: "";
+            position: absolute;
+            top: 5px;
+            left: 7px;
+            width: 6px;
+            height: 6px;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-heartbeat text-2xl mr-2"></i>
+                        <span class="text-xl font-bold">Vitalis</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-center space-x-4">
+                        <a href="#" class="px-3 py-2 rounded-md text-sm font-medium bg-white bg-opacity-20">Home</a>
+                        <a href="#features" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-20">Features</a>
+                        <a href="#recommendations" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-20">Recommendations</a>
+                        <a href="#contact" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-white hover:bg-opacity-20">Contact</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button onclick="toggleModal()" class="bg-white bg-opacity-20 px-4 py-2 rounded-md text-sm font-medium hover:bg-opacity-30">
+                            <i class="fas fa-user mr-1"></i> Sign In
+                        </button>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white hover:bg-white hover:bg-opacity-20 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="gradient-bg text-white relative overflow-hidden">
+        <div class="blob bg-tiffany-300 top-0 left-0 transform -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="blob bg-blue-300 bottom-0 right-0 transform translate-x-1/2 translate-y-1/2"></div>
+        
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
+                <div class="mb-8 lg:mb-0">
+                    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl mb-4">
+                        Your Personal Health Companion
+                    </h1>
+                    <p class="text-xl opacity-90 mb-8">
+                        Track, analyze, and improve your health with AI-powered nutrition analysis and personalized recommendations.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="window.location.href='#features'" class="bg-white text-tiffany-500 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium text-lg shadow-md transition duration-300">
+                            Get Started
+                        </button>
+                        <button onclick="window.location.href='#recommendations'" class="border-2 border-white text-white hover:bg-white hover:bg-opacity-20 px-6 py-3 rounded-lg font-medium text-lg transition duration-300">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Enhanced Daily Nutrition Panel -->
+                    <div class="bg-white bg-opacity-20 backdrop-blur-lg rounded-2xl p-4 shadow-xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Daily Nutrition</h3>
+                            <span class="text-xs bg-white bg-opacity-30 px-2 py-1 rounded-full">Today</span>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- Water Intake -->
+                            <div class="bg-white bg-opacity-10 p-3 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center">
+                                        <div class="water-drop">
+                                            <i class="fas fa-tint text-white text-xs"></i>
+                                        </div>
+                                        <span>Water</span>
+                                    </div>
+                                    <span class="text-sm">1.2/2.5L</span>
+                                </div>
+                                <div class="w-full bg-white bg-opacity-30 rounded-full h-2">
+                                    <div class="bg-blue-400 h-2 rounded-full" style="width: 48%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Calories -->
+                            <div>
+                                <div class="flex justify-between mb-1 text-sm">
+                                    <span>Calories</span>
+                                    <span>1,850/2,200 kcal</span>
+                                </div>
+                                <div class="w-full bg-white bg-opacity-30 rounded-full h-2">
+                                    <div class="bg-white h-2 rounded-full" style="width: 75%"></div>
+                                </div>
+                                <div class="flex justify-between mt-1">
+                                    <span class="text-xs text-white text-opacity-70">Breakfast: 450 kcal</span>
+                                    <span class="text-xs text-white text-opacity-70">Lunch: 550 kcal</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Macros -->
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="bg-white bg-opacity-10 p-2 rounded-lg">
+                                    <div class="flex justify-between mb-1 text-xs">
+                                        <span>Protein</span>
+                                        <span>82g</span>
+                                    </div>
+                                    <div class="w-full bg-white bg-opacity-30 rounded-full h-1.5">
+                                        <div class="bg-green-400 h-1.5 rounded-full" style="width: 82%"></div>
+                                    </div>
+                                    <div class="text-xs text-white text-opacity-70 mt-1">25% of calories</div>
+                                </div>
+                                <div class="bg-white bg-opacity-10 p-2 rounded-lg">
+                                    <div class="flex justify-between mb-1 text-xs">
+                                        <span>Carbs</span>
+                                        <span>210g</span>
+                                    </div>
+                                    <div class="w-full bg-white bg-opacity-30 rounded-full h-1.5">
+                                        <div class="bg-yellow-400 h-1.5 rounded-full" style="width: 70%"></div>
+                                    </div>
+                                    <div class="text-xs text-white text-opacity-70 mt-1">45% of calories</div>
+                                </div>
+                                <div class="bg-white bg-opacity-10 p-2 rounded-lg">
+                                    <div class="flex justify-between mb-1 text-xs">
+                                        <span>Fats</span>
+                                        <span>45g</span>
+                                    </div>
+                                    <div class="w-full bg-white bg-opacity-30 rounded-full h-1.5">
+                                        <div class="bg-red-400 h-1.5 rounded-full" style="width: 69%"></div>
+                                    </div>
+                                    <div class="text-xs text-white text-opacity-70 mt-1">30% of calories</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Micros -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-white bg-opacity-10 p-2 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs">Fiber</span>
+                                        <span class="text-xs">18/25g</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-10 p-2 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs">Sugar</span>
+                                        <span class="text-xs">32/50g</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-10 p-2 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs">Sodium</span>
+                                        <span class="text-xs">1,200mg</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-10 p-2 rounded-lg">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xs">Potassium</span>
+                                        <span class="text-xs">2,800mg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex justify-between items-center text-sm">
+                            <div class="flex items-center">
+                                <div class="bg-white bg-opacity-20 p-1.5 rounded-full mr-2">
+                                    <i class="fas fa-walking text-xs"></i>
+                                </div>
+                                <span>7,542 steps</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="bg-white bg-opacity-20 p-1.5 rounded-full mr-2">
+                                    <i class="fas fa-moon text-xs"></i>
+                                </div>
+                                <span>7h 12m sleep</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Updated AI Health Client with better visibility -->
+                    <div class="bg-white bg-opacity-20 backdrop-blur-lg rounded-2xl p-4 shadow-xl">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-white bg-opacity-30 w-8 h-8 rounded-full flex items-center justify-center mr-2">
+                                <i class="fas fa-robot text-white text-sm"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold">AI Health Coach</h3>
+                            <span class="ml-auto bg-green-500 text-white text-xs px-2 py-1 rounded-full">Online</span>
+                        </div>
+                        <div class="chat-container mb-3" id="chatContainer">
+                            <div class="ai-message bot">
+                                <p class="text-sm">Hello! I'm your AI Health Coach. How can I assist you with your health goals today?</p>
+                            </div>
+                            <div class="ai-message user">
+                                <p class="text-sm">I'd like some meal suggestions for breakfast.</p>
+                            </div>
+                            <div class="ai-message bot">
+                                <p class="text-sm">Great! Based on your nutrition goals, I recommend:</p>
+                                <ul class="text-sm list-disc pl-4 mt-1">
+                                    <li>Greek yogurt with berries and granola (350 kcal, 20g protein)</li>
+                                    <li>Avocado toast with poached eggs (450 kcal, 18g protein)</li>
+                                    <li>Oatmeal with banana and almond butter (400 kcal, 12g protein)</li>
+                                </ul>
+                                <p class="text-sm mt-2">Which one sounds most appealing to you?</p>
+                            </div>
+                            <div id="typingIndicator" class="typing-indicator hidden">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="userInput" placeholder="Ask your health coach..." class="w-full bg-white bg-opacity-30 text-white placeholder-white placeholder-opacity-70 rounded-full py-2 px-4 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-white">
+                            <button onclick="sendMessage()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-white">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Transform Your Health Journey</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Discover how Vitalis can help you achieve your health goals with our powerful features</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Create Account Card -->
+            <div class="feature-card bg-white p-8 shadow-md relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-tiffany-100 w-16 h-16 rounded-bl-full"></div>
+                <div class="relative z-10">
+                    <div class="bg-tiffany-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-user-plus text-tiffany-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Create Account</h3>
+                    <p class="text-gray-600 mb-6">Get started in minutes with our simple signup process. Personalize your profile to receive tailored health insights.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Quick 2-minute setup</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Personalized health profile</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Sync with wearables</span>
+                        </li>
+                    </ul>
+                    <button onclick="toggleModal()" class="mt-6 bg-tiffany-500 hover:bg-tiffany-600 text-white px-6 py-2 rounded-lg font-medium transition duration-300">
+                        Sign Up Now
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Nutrition Analysis Card -->
+            <div class="feature-card bg-white p-8 shadow-md relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-tiffany-100 w-16 h-16 rounded-bl-full"></div>
+                <div class="relative z-10">
+                    <div class="bg-tiffany-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-utensils text-tiffany-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Nutrition Analysis</h3>
+                    <p class="text-gray-600 mb-6">Our AI-powered system analyzes your meals to provide detailed nutritional breakdowns and smart recommendations.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Image-based food recognition</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Macro & micronutrient tracking</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Personalized meal suggestions</span>
+                        </li>
+                    </ul>
+                    <button onclick="window.location.href='#recommendations'" class="mt-6 bg-tiffany-500 hover:bg-tiffany-600 text-white px-6 py-2 rounded-lg font-medium transition duration-300">
+                        Try Analysis
+                    </button>
+                </div>
+            </div>
+            
+            <!-- History Trend Card -->
+            <div class="feature-card bg-white p-8 shadow-md relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-tiffany-100 w-16 h-16 rounded-bl-full"></div>
+                <div class="relative z-10">
+                    <div class="bg-tiffany-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-tiffany-500 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">History Trend</h3>
+                    <p class="text-gray-600 mb-6">Visualize your progress with comprehensive trend analysis and identify patterns in your health journey.</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Interactive health timeline</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Customizable reports</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-tiffany-500 mt-1 mr-2"></i>
+                            <span class="text-gray-700">Progress milestones</span>
+                        </li>
+                    </ul>
+                    <button onclick="window.location.href='#recommendations'" class="mt-6 bg-tiffany-500 hover:bg-tiffany-600 text-white px-6 py-2 rounded-lg font-medium transition duration-300">
+                        View Trends
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercise & Diet Recommendations Section -->
+    <div id="recommendations" class="bg-gray-50 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Your Weekly Health Plan</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Personalized recommendations for nutrition, exercise, and wellness</p>
+            </div>
+            
+            <!-- Week Navigation -->
+            <div class="mb-8 overflow-x-auto week-planner">
+                <div class="flex space-x-2 min-w-max">
+                    <button class="day-selector active px-6 py-3 rounded-lg font-medium transition duration-200" onclick="selectDay(this, 'monday')">
+                        Monday
+                    </button>
+                    <button class="day-selector px-6 py-3 rounded-lg font-medium transition duration-200" onclick="selectDay(this, 'tuesday')">
+                        Tuesday
+                    </button>
+                    <button class="day-selector px-6 py-3 rounded-lg font-medium transition duration-200" onclick="selectDay(this, 'wednesday')">
+                        Wednesday
+                    </button>
+                    <button class="day-selector px-6 py-3 rounded-lg font-medium transition duration-200" onclick="selectDay(this, 'thursday')">
+                        Thursday
+                    </button>
+                    <button class="day-selector px-6 py-3 rounded-lg font-medium transition duration-200" onclick="selectDay(this, 'friday')">
+                        Friday
+                    </button>
+                    <button class="day-selector px-6 py-3 rounded-lg font-medium transition duration-200" onclick="selectDay(this, 'saturday')">
+                        Saturday
+                    </button>
+                    <button class="day-selector px-6 py-3 rounded-lg font-medium transition duration-200" onclick="selectDay(this, 'sunday')">
+                        Sunday
+                    </button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Nutrition Plan -->
+                <div class="recommendation-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-tiffany-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-utensils text-tiffany-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Nutrition Plan</h3>
+                    </div>
+                    
+                    <div class="timeline space-y-6">
+                        <div>
+                            <h4 class="meal-time font-medium text-gray-700 mb-2">Breakfast (7:00 AM)</h4>
+                            <p class="text-gray-600 ml-6">Avocado toast on whole grain bread with poached eggs and cherry tomatoes (450 kcal)</p>
+                        </div>
+                        <div>
+                            <h4 class="meal-time font-medium text-gray-700 mb-2">Morning Snack (10:30 AM)</h4>
+                            <p class="text-gray-600 ml-6">Greek yogurt with mixed berries and a tablespoon of chia seeds (250 kcal)</p>
+                        </div>
+                        <div>
+                            <h4 class="meal-time font-medium text-gray-700 mb-2">Lunch (1:00 PM)</h4>
+                            <p class="text-gray-600 ml-6">Quinoa bowl with grilled chicken, roasted vegetables, and tahini dressing (550 kcal)</p>
+                        </div>
+                        <div>
+                            <h4 class="meal-time font-medium text-gray-700 mb-2">Afternoon Snack (4:00 PM)</h4>
+                            <p class="text-gray-600 ml-6">Handful of almonds and a small apple (200 kcal)</p>
+                        </div>
+                        <div>
+                            <h4 class="meal-time font-medium text-gray-700 mb-2">Dinner (7:30 PM)</h4>
+                            <p class="text-gray-600 ml-6">Baked salmon with roasted sweet potatoes and steamed broccoli (600 kcal)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 bg-tiffany-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-sm font-medium text-gray-600">Total Calories: </span>
+                                <span class="font-medium text-tiffany-700">2,050 kcal</span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="text-tiffany-500 hover:text-tiffany-600">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-tiffany-500 hover:text-tiffany-600">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-2 grid grid-cols-3 gap-2 text-xs">
+                            <div class="bg-tiffany-100 text-tiffany-700 px-2 py-1 rounded text-center">P: 120g</div>
+                            <div class="bg-tiffany-100 text-tiffany-700 px-2 py-1 rounded text-center">C: 220g</div>
+                            <div class="bg-tiffany-100 text-tiffany-700 px-2 py-1 rounded text-center">F: 65g</div>
+                        </div>
+                    </div>
+                    
+                    <button class="mt-4 w-full bg-tiffany-500 hover:bg-tiffany-600 text-white px-4 py-2 rounded-lg font-medium transition duration-300">
+                        Track Today's Meals
+                    </button>
+                </div>
+                
+                <!-- Workout Plan -->
+                <div class="recommendation-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-tiffany-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-running text-tiffany-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Workout Plan</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-1">Cardio Session</h4>
+                            <p class="text-gray-600">30 minute moderate-intensity cycling or brisk walking</p>
+                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span>8:00 AM - 8:30 AM</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-1">Strength Training</h4>
+                            <ul class="text-gray-600 space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-dumbbell text-tiffany-500 text-xs mt-1 mr-2"></i>
+                                    <span>3 sets of 12 squats with body weight</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-dumbbell text-tiffany-500 text-xs mt-1 mr-2"></i>
+                                    <span>3 sets of 10 push-ups (knees if needed)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-dumbbell text-tiffany-500 text-xs mt-1 mr-2"></i>
+                                    <span>3 sets of 12 lunges (each leg)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-dumbbell text-tiffany-500 text-xs mt-1 mr-2"></i>
+                                    <span>3 sets of 10 dumbbell rows (each arm)</span>
+                                </li>
+                            </ul>
+                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span>6:00 PM - 6:45 PM</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-1">Stretching</h4>
+                            <p class="text-gray-600">10 minute full-body stretching routine</p>
+                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span>After workout</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-600">Activity Level</span>
+                            <span class="text-sm font-medium text-gray-600">Moderate</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-tiffany-500 activity-level" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 bg-tiffany-50 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-fire text-tiffany-500 mr-2"></i>
+                            <span class="text-sm font-medium text-gray-600">Estimated Calorie Burn: </span>
+                            <span class="font-medium text-tiffany-700 ml-1">350-450 kcal</span>
+                        </div>
+                    </div>
+                    
+                    <button class="mt-4 w-full bg-tiffany-500 hover:bg-tiffany-600 text-white px-4 py-2 rounded-lg font-medium transition duration-300">
+                        Log Workout
+                    </button>
+                </div>
+                
+                <!-- Wellness Tips -->
+                <div class="recommendation-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-tiffany-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-spa text-tiffany-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Wellness Tips</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-tiffany-50 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-tint text-tiffany-500 mr-2"></i>
+                                <h4 class="font-medium text-gray-700">Hydration</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">Aim for 2.5L today. You've had 1.2L so far. Try drinking a glass of water every hour.</p>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="bg-tiffany-400 h-2 rounded-full" style="width: 48%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-tiffany-50 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-moon text-tiffany-500 mr-2"></i>
+                                <h4 class="font-medium text-gray-700">Sleep Quality</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">Target 7-9 hours. Try a digital detox 1 hour before bed to improve sleep quality.</p>
+                            <div class="mt-2 flex items-center text-sm text-tiffany-600">
+                                <i class="fas fa-bed mr-1"></i>
+                                <span>Recommended bedtime: 10:30 PM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-tiffany-50 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-brain text-tiffany-500 mr-2"></i>
+                                <h4 class="font-medium text-gray-700">Mindfulness</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">Schedule a 10-minute mindfulness session today to reduce stress and improve focus.</p>
+                            <div class="mt-2">
+                                <button class="text-xs bg-tiffany-500 text-white px-3 py-1 rounded-full">
+                                    <i class="fas fa-play mr-1"></i> Start Guided Session
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-tiffany-50 p-4 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-walking text-tiffany-500 mr-2"></i>
+                                <h4 class="font-medium text-gray-700">Activity Reminder</h4>
+                            </div>
+                            <p class="text-gray-600 text-sm">Take a 5-minute walking break every hour to maintain energy levels.</p>
+                            <div class="mt-2 flex items-center text-sm text-tiffany-600">
+                                <i class="fas fa-bell mr-1"></i>
+                                <span>Next reminder at 3:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="mt-6 w-full bg-tiffany-500 hover:bg-tiffany-600 text-white px-4 py-2 rounded-lg font-medium transition duration-300">
+                        View More Tips
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <button onclick="window.location.href='#contact'" class="bg-white border-2 border-tiffany-500 text-tiffany-500 hover:bg-tiffany-50 px-8 py-3 rounded-lg font-medium text-lg shadow-sm transition duration-300">
+                    Get Personalized Recommendations
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="gradient-bg py-16 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to take control of your health?</h2>
+            <p class="text-xl opacity-90 mb-8 max-w-3xl mx-auto">Join Vitalis today and start your journey to better health with personalized insights and powerful tracking tools.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="toggleModal()" class="bg-white text-tiffany-500 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium text-lg shadow-md transition duration-300">
+                    Get Started for Free
+                </button>
+                <button onclick="window.location.href='#features'" class="border-2 border-white text-white hover:bg-white hover:bg-opacity-20 px-8 py-3 rounded-lg font-medium text-lg transition duration-300">
+                    See How It Works
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-800 text-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="col-span-2">
+                    <div class="flex items-center">
+                        <i class="fas fa-heartbeat text-2xl mr-2 text-tiffany-400"></i>
+                        <span class="text-xl font-bold">Vitalis</span>
+                    </div>
+                    <p class="mt-4 text-gray-400 text-sm">
+                        Your personal health companion for nutrition analysis, health tracking, and personalized recommendations.
+                    </p>
+                    <div class="mt-6 flex space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold uppercase tracking-wider">Product</h3>
+                    <div class="mt-4 space-y-2">
+                        <a href="#features" class="text-gray-400 hover:text-white block text-sm">Features</a>
+                        <a href="#pricing" class="text-gray-400 hover:text-white block text-sm">Pricing</a>
+                        <a href="#api" class="text-gray-400 hover:text-white block text-sm">API</a>
+                        <a href="#integrations" class="text-gray-400 hover:text-white block text-sm">Integrations</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-semibold uppercase tracking-wider">Company</h3>
+                    <div class="mt-4 space-y-2">
+                        <a href="#about" class="text-gray-400 hover:text-white block text-sm">About</a>
+                        <a href="#blog" class="text-gray-400 hover:text-white block text-sm">Blog</a>
+                        <a href="#careers" class="text-gray-400 hover:text-white block text-sm">Careers</a>
+                        <a href="#contact" class="text-gray-400 hover:text-white block text-sm">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between">
+                <p class="text-gray-400 text-sm">
+                    &copy; 2023 Vitalis. All rights reserved.
+                </p>
+                <div class="mt-4 md:mt-0 flex space-x-6">
+                    <a href="#privacy" class="text-gray-400 hover:text-white text-sm">Privacy</a>
+                    <a href="#terms" class="text-gray-400 hover:text-white text-sm">Terms</a>
+                    <a href="#cookies" class="text-gray-400 hover:text-white text-sm">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sign In Modal -->
+    <div id="modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-tiffany-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-user text-tiffany-500"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Sign in to your account</h3>
+                            <div class="mt-2">
+                                <form class="space-y-4">
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                                        <input type="email" id="email" class="mt-1 focus:ring-tiffany-500 focus:border-tiffany-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                                        <input type="password" id="password" class="mt-1 focus:ring-tiffany-500 focus:border-tiffany-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-tiffany-600 focus:ring-tiffany-500 border-gray-300 rounded">
+                                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-tiffany-600 text-base font-medium text-white hover:bg-tiffany-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tiffany-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Sign in
+                    </button>
+                    <button type="button" onclick="toggleModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-tiffany-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+                <div class="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                    <div class="text-sm text-center">
+                        <a href="#" class="font-medium text-tiffany-600 hover:text-tiffany-500">Forgot your password?</a>
+                    </div>
+                    <div class="text-sm text-center mt-2">
+                        <span class="text-gray-500">Don't have an account? </span>
+                        <a href="#" class="font-medium text-tiffany-600 hover:text-tiffany-500">Sign up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle modal visibility
+        function toggleModal() {
+            document.getElementById('modal').classList.toggle('hidden');
+        }
+
+        // Select day in weekly planner
+        function selectDay(element, day) {
+            document.querySelectorAll('.day-selector').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            // Here you would typically load data for the selected day
+            console.log('Selected day:', day);
+        }
+
+        // AI Health Coach chat functionality
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const chatContainer = document.getElementById('chatContainer');
+            const typingIndicator = document.getElementById('typingIndicator');
+            
+            if (userInput.value.trim() === '') return;
+            
+            // Add user message to chat
+            const userMessage = document.createElement('div');
+            userMessage.className = 'ai-message user';
+            userMessage.innerHTML = `<p class="text-sm">${userInput.value}</p>`;
+            chatContainer.appendChild(userMessage);
+            
+            // Show typing indicator
+            typingIndicator.classList.remove('hidden');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Clear input
+            userInput.value = '';
+            
+            // Simulate AI response after a delay
+            setTimeout(() => {
+                typingIndicator.classList.add('hidden');
+                
+                const botMessage = document.createElement('div');
+                botMessage.className = 'ai-message bot';
+                
+                // Simple response logic
+                const userText = userMessage.textContent.toLowerCase();
+                let response = '';
+                
+                if (userText.includes('breakfast')) {
+                    response = `Here are some healthy breakfast ideas based on your preferences:
+                    <ul class="text-sm list-disc pl-4 mt-1">
+                        <li>Smoothie bowl with spinach, banana, almond butter and granola (400 kcal)</li>
+                        <li>Scrambled eggs with whole wheat toast and avocado (450 kcal)</li>
+                        <li>Chia pudding with mixed berries and nuts (350 kcal)</li>
+                    </ul>
+                    <p class="text-sm mt-2">Would you like me to add one of these to your meal plan?</p>`;
+                } else if (userText.includes('lunch') || userText.includes('dinner')) {
+                    response = `For your main meals, I recommend:
+                    <ul class="text-sm list-disc pl-4 mt-1">
+                        <li>Grilled chicken with quinoa and roasted vegetables (550 kcal)</li>
+                        <li>Salmon with sweet potato and steamed broccoli (600 kcal)</li>
+                        <li>Vegetable stir-fry with tofu and brown rice (500 kcal)</li>
+                    </ul>
+                    <p class="text-sm mt-2">Which option would you prefer?</p>`;
+                } else if (userText.includes('workout') || userText.includes('exercise')) {
+                    response = `Based on your fitness level, here's a suggested workout:
+                    <ul class="text-sm list-disc pl-4 mt-1">
+                        <li>Warm-up: 5 min dynamic stretching</li>
+                        <li>Cardio: 20 min HIIT (30s on, 30s off)</li>
+                        <li>Strength: 3 rounds of squats, push-ups, rows (12 reps each)</li>
+                        <li>Cool-down: 5 min stretching</li>
+                    </ul>
+                    <p class="text-sm mt-2">Would you like me to schedule this for you?</p>`;
+                } else {
+                    response = `I'm happy to help with your health goals! Could you tell me more about what you're looking to achieve?`;
+                }
+                
+                botMessage.innerHTML = response;
+                chatContainer.appendChild(botMessage);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1500);
+        }
+
+        // Allow pressing Enter to send message
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
